@@ -1,0 +1,6 @@
+{
+  "name": "sourdough-examples",
+  "description": "Example stylesheets demonstrating how to use Sourdough vector tiles",
+  "type": "module",
+  "license": "CC0-1.0"
+}
