@@ -60,4 +60,4 @@ const place_labels_city_town = {
   },
 };
 
-export const PLACES = [place_labels_country, place_labels_state, place_labels_city_town];
+export const PLACES = [place_labels_city_town, place_labels_state, place_labels_country];
