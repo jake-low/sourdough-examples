@@ -2,5 +2,12 @@
   "name": "sourdough-examples",
   "description": "Example stylesheets demonstrating how to use Sourdough vector tiles",
   "type": "module",
-  "license": "CC0-1.0"
+  "license": "CC0-1.0",
+  "scripts": {
+    "format": "biome format --write",
+    "check": "biome check"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.13"
+  }
 }
