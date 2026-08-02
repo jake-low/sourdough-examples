@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Americana vs Americanish</title>
+    <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@6/dist/maplibre-gl.css" rel="stylesheet" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+      #panes {
+        display: flex;
+        height: 100%;
+      }
+      .pane {
+        position: relative;
+        flex: 1 1 0;
+        min-width: 0;
+      }
+      .pane + .pane {
+        border-left: 1px solid #333;
+      }
+      .map {
+        position: absolute;
+        inset: 0;
+      }
+      .label {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        z-index: 1;
+        padding: 3px 8px;
+        border-radius: 4px;
+        background: #ffffffcc;
+        font: 500 13px/1.4 system-ui, sans-serif;
+        color: #222;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="panes">
+      <div class="pane">
+        <div class="label">Americana (americanamap.org)</div>
+        <div class="map" id="americana"></div>
+      </div>
+      <div class="pane">
+        <div class="label">Americanish (Sourdough)</div>
+        <div class="map" id="americanish"></div>
+      </div>
+    </div>
+    <script type="module">
+      import * as maplibregl from "https://cdn.jsdelivr.net/npm/maplibre-gl@6/dist/maplibre-gl.mjs";
+      import { renderIcons } from "./icons.js";
+
+      function syncMaps(maps) {
+        let syncing = false;
+        const follow = (source) => {
+          if (syncing) return;
+          syncing = true;
+          const camera = {
+            center: source.getCenter(),
+            zoom: source.getZoom(),
+            bearing: source.getBearing(),
+            pitch: source.getPitch(),
+          };
+          for (const map of maps) {
+            if (map !== source) map.jumpTo(camera);
+          }
+          syncing = false;
+        };
+        for (const map of maps) map.on("move", () => follow(map));
+      }
+
+      // Americana ships hillshading turned off (its UI has a toggle for it);
+      // americanish draws it unconditionally, so switch it on here to match.
+      const americanaStyle = await fetch("https://americanamap.org/style.json").then((r) => r.json());
+      americanaStyle.layers.find((l) => l.id === "hillshading").layout.visibility = "visible";
+
+      const americana = new maplibregl.Map({
+        container: "americana",
+        style: americanaStyle,
+        center: [-94, 40.5],
+        zoom: 4,
+        hash: true,
+      });
+
+      const americanish = new maplibregl.Map({
+        container: "americanish",
+        style: await fetch("../dist/americanish.json").then((r) => r.json()),
+        center: americana.getCenter(),
+        zoom: americana.getZoom(),
+        bearing: americana.getBearing(),
+        pitch: americana.getPitch(),
+      });
+      americanish.addControl(new maplibregl.NavigationControl());
+
+      for (const map of [americana, americanish]) renderIcons(map);
+      syncMaps([americana, americanish]);
+    </script>
+  </body>
+</html>
