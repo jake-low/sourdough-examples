@@ -10,7 +10,7 @@ export const style = {
   "sources": {
     "sourdough": {
       "type": "vector",
-      "url": "https://tiles.osm.fyi/vector/sourdough.json",
+      "url": "https://tiles.openstreetmap.us/vector/sourdough.json",
       "url": "https://tiles.openstreetmap.us/vector/sourdough.json",
     },
   },
